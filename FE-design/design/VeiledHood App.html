@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>VeiledHood — App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="vh-tokens.css" />
+<link rel="stylesheet" href="vh-components.css" />
+<link rel="stylesheet" href="vh-shell.css" />
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="vh-data.js"></script>
+<script type="text/babel" src="vh-icons.jsx"></script>
+<script type="text/babel" src="vh-primitives.jsx"></script>
+<script type="text/babel" src="vh-shell.jsx"></script>
+<script type="text/babel" src="vh-screens-core.jsx"></script>
+<script type="text/babel" src="vh-screens-trade.jsx"></script>
+<script type="text/babel" src="vh-screens-private.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useCallback } = React;
+const WALLET = '0x7eA4bC91f3D2e8a7B4c6F1e0D9a3C5b8E2f7D29c';
+const KEY = 'vh.route';
+
+function App() {
+  const [entered, setEntered] = useState(false);
+  const [route, setRoute] = useState(() => localStorage.getItem(KEY) || 'portfolio');
+  const [drawer, setDrawer] = useState(false);
+  const [priv, setPriv] = useState(true);
+  const [confirm, setConfirm] = useState(null);
+  const [phase, setPhase] = useState('review'); // review | signing | done
+  const [stepIdx, setStepIdx] = useState(0);
+  const [toast, setToast] = useState(null);
+
+  const go = useCallback(r => { setRoute(r); localStorage.setItem(KEY, r); }, []);
+  const fireToast = useCallback((title, desc) => setToast({ title, desc, k: Date.now() }), []);
+
+  // drive the signing stepper
+  useEffect(() => {
+    if (phase !== 'signing' || !confirm) return;
+    const steps = confirm.steps || ['Submitting', 'Confirming'];
+    if (stepIdx >= steps.length) { setPhase('done'); return; }
+    const t = setTimeout(() => setStepIdx(i => i + 1), 780);
+    return () => clearTimeout(t);
+  }, [phase, stepIdx, confirm]);
+
+  const openConfirm = useCallback(c => { setConfirm(c); setPhase('review'); setStepIdx(0); }, []);
+  const closeConfirm = () => { setConfirm(null); setPhase('review'); setStepIdx(0); };
+  const finish = () => { closeConfirm(); fireToast('Transaction settled', confirm && confirm.title); };
+
+  const ctx = { priv, go, confirm: openConfirm, toast: fireToast, wallet: WALLET };
+
+  if (!entered) return <Onboarding onDone={() => setEntered(true)} />;
+
+  const SCREENS = {
+    portfolio: Portfolio, swap: Swap, bridge: Bridge, vault: Vault, staking: Staking,
+    data: DataVault, agent: Agent, mcp: Mcp, payments: Payments, settings: Settings,
+  };
+  const Screen = SCREENS[route] || Portfolio;
+  const steps = (confirm && confirm.steps) || [];
+
+  return (
+    <div className="app">
+      {drawer && <div className="scrim" onClick={() => setDrawer(false)} />}
+      <Rail route={route} go={go} open={drawer} onClose={() => setDrawer(false)} wallet={WALLET} />
+      <div className="main">
+        <Top route={route} onMenu={() => setDrawer(true)} priv={priv} setPriv={setPriv} />
+        <div className="content" key={route}><Screen ctx={ctx} /></div>
+      </div>
+      <MobileTabs route={route} go={go} />
+
+      {confirm && (
+        <Modal title={phase === 'done' ? 'Settled' : confirm.title} onClose={phase === 'signing' ? undefined : closeConfirm}
+          icon={phase === 'done' ? <IcCheck size={16} /> : <IcShield size={16} />}
+          footer={
+            phase === 'review' ? (
+              <>
+                <Btn kind="sec" block onClick={closeConfirm}>Cancel</Btn>
+                <Btn kind="pri" block onClick={() => { setPhase('signing'); setStepIdx(0); }}>{confirm.cta}</Btn>
+              </>
+            ) : phase === 'done' ? (
+              <Btn kind="pri" block onClick={finish}>Done</Btn>
+            ) : null
+          }>
+          {phase === 'review' && (
+            <>
+              <div className="pbar" style={{ marginBottom: 16 }}>
+                <span style={{ color: 'var(--vio-lift)' }}><IcLock size={17} /></span>
+                <span className="pt">This routes through the shielded pool</span>
+              </div>
+              {confirm.rows.map(([k, v]) => <DRow key={k} k={k} v={v} />)}
+            </>
+          )}
+
+          {phase === 'signing' && (
+            <div>
+              {steps.map((s, i) => (
+                <Step key={s} n={i + 1} title={s} desc={i < stepIdx ? 'Complete' : i === stepIdx ? 'In progress…' : 'Waiting'}
+                  state={i < stepIdx ? 'done' : i === stepIdx ? 'act' : ''} />
+              ))}
+            </div>
+          )}
+
+          {phase === 'done' && (
+            <div style={{ textAlign: 'center', padding: '10px 0 4px' }}>
+              <div style={{ width: 60, height: 60, margin: '0 auto 18px', borderRadius: '50%', background: 'var(--pos-dim)', border: '1px solid rgba(63,217,139,.34)', color: 'var(--pos)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IcCheck size={26} />
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-.02em' }}>{confirm.title.replace(/^Confirm /, '').replace(/^./, c => c.toUpperCase())} complete</div>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--tx3)', marginTop: 7 }}>Nothing linking this to your wallet was published.</div>
+              <div style={{ textAlign: 'left', marginTop: 20, paddingTop: 6, borderTop: '1px solid var(--line)' }}>
+                {confirm.rows.slice(0, 3).map(([k, v]) => <DRow key={k} k={k} v={v} />)}
+                <DRow k="Tx" v={<span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>0x9f2c…41ab <IcExternal size={12} /></span>} tone="vio" />
+              </div>
+            </div>
+          )}
+        </Modal>
+      )}
+
+      {toast && <Toast key={toast.k} title={toast.title} desc={toast.desc} onDone={() => setToast(null)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

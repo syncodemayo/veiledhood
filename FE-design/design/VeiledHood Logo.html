@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="design_doc_mode" content="canvas" />
+<title>VeiledHood — Logo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root{--vio:#8257FF;--vio-lift:#A88CFF;--vio-deep:#5B32D6;--vio-glow:rgba(130,87,255,.5);--ink:#08090B;--surface:#101117;--surface2:#16171F;--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.17);--text:#F4F4F6;--dim:rgba(244,244,246,.72);--dim2:rgba(244,244,246,.52);--paper:#F4F4F6;--sans:'Archivo',system-ui,sans-serif;--mono:'DM Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--vio-lift)}a:hover{color:#C4B2FF}
+.frame{position:absolute;background:var(--ink);border:1px solid var(--line);border-radius:16px;overflow:hidden;color:var(--text)}
+.frame.light{background:var(--paper);color:var(--ink);border-color:rgba(8,9,11,.12)}
+.fl{position:absolute;left:28px;top:24px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim2);z-index:3}
+.fl b{color:var(--vio-lift);font-weight:400}
+.frame.light .fl{color:rgba(8,9,11,.6)}.frame.light .fl b{color:var(--vio-deep)}
+.fn{position:absolute;right:28px;top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim2);z-index:3}
+.cap{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim2);margin-top:11px}
+.frame.light .cap{color:rgba(8,9,11,.6)}
+
+/* wordmark — 02 colour break */
+.wm{font-family:var(--sans);letter-spacing:-.035em;line-height:1;white-space:nowrap;display:inline-block}
+.wm .a{font-weight:500}
+.wm .b{font-weight:800;color:var(--vio-lift)}
+.frame.light .wm .b{color:var(--vio)}
+.wm.oncolor .a,.wm.oncolor .b{color:#fff}
+.wm.mono .a,.wm.mono .b{color:currentColor}
+
+.slot svg{display:block;width:100%;height:100%}
+.slot{color:var(--vio-lift)}
+.slot.solid{color:var(--vio)}
+.slot.white{color:#fff}
+.slot.ink{color:var(--ink)}
+
+/* ── HERO ── */
+.hero{padding:0 70px;height:100%;display:flex;align-items:center;gap:64px;position:relative}
+.hero::after{content:'';position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,var(--vio-glow) 0%,transparent 66%);pointer-events:none}
+.hero .hm{width:184px;height:184px;flex:0 0 184px;position:relative;z-index:2}
+.hero .ht{position:relative;z-index:2}
+.hero .ht .wm{font-size:92px}
+.hero .ht .tag{font-family:var(--mono);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-top:20px}
+.hero .ht .tag b{color:var(--vio-lift);font-weight:400}
+
+/* ── CONSTRUCTION ── */
+.constr{padding:78px 40px 34px;display:flex;gap:34px;align-items:center;height:100%}
+.gridbox{width:290px;height:290px;flex:0 0 290px;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.gridbox .g{position:absolute;inset:0;background:linear-gradient(to right,var(--line) 1px,transparent 1px) 0 0/29px 29px,linear-gradient(to bottom,var(--line) 1px,transparent 1px) 0 0/29px 29px;opacity:.55;border-radius:10px}
+.gridbox .mk{position:absolute;inset:29px;color:var(--vio-lift)}
+.gridbox .mk svg{width:100%;height:100%}
+.notes{display:flex;flex-direction:column;gap:15px}
+.nrow{display:flex;gap:13px;align-items:flex-start}
+.nrow .ni{font-family:var(--mono);font-size:10px;color:var(--vio-lift);flex:0 0 22px;padding-top:2px}
+.nrow .nt{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.014em;line-height:1.3}
+.nrow .nx{display:block;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.5;margin-top:4px}
+
+/* ── LOCKUPS ── */
+.locks{padding:78px 40px 34px;display:flex;flex-direction:column;gap:0;height:100%}
+.lkrow{display:flex;align-items:flex-end;gap:44px;padding:22px 0;border-bottom:1px solid var(--line)}
+.lkrow:last-child{border-bottom:0}
+.lk{display:flex;align-items:center;gap:17px}
+.lk .m{width:50px;height:50px;flex:0 0 50px}
+.lk .wm{font-size:32px}
+.lkst{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.lkst .m{width:56px;height:56px}
+.lkst .wm{font-size:23px}
+.badge{width:66px;height:66px;border-radius:15px;background:var(--vio);display:flex;align-items:center;justify-content:center}
+.badge .m{width:38px;height:38px}
+.symb{width:60px;height:60px}
+
+/* ── VARIANTS ── */
+.vars{padding:78px 34px 34px;display:grid;grid-template-columns:repeat(5,1fr);gap:18px;height:100%}
+.vwrap{display:flex;flex-direction:column}
+.vcell{flex:1;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:22px 10px}
+.vcell .m{width:44px;height:44px}
+.vcell .wm{font-size:19px}
+.vwrap .cap{text-align:center;margin-top:12px}
+.v1{background:var(--ink);border:1px solid var(--line2)}
+.v2{background:var(--paper)}
+.v3{background:var(--vio)}
+.v4{background:var(--paper)}
+.v5{background:var(--ink);border:1px solid var(--line2)}
+
+/* ── SIZES ── */
+.sizes{padding:78px 40px 34px;height:100%;display:flex;flex-direction:column;gap:26px}
+.ladder{display:flex;align-items:flex-end;gap:26px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.si{display:flex;flex-direction:column;align-items:center;gap:10px}
+.si .m{color:var(--vio-lift)}
+.si span{font-family:var(--mono);font-size:9px;color:var(--dim2)}
+.clear{display:flex;align-items:center;gap:30px}
+.cbox{position:relative;width:186px;height:126px;flex:0 0 186px}
+.cbox .out{position:absolute;inset:0;border:1px dashed var(--line2);border-radius:5px}
+.cbox .in{position:absolute;left:26px;top:26px;right:26px;bottom:26px;display:flex;align-items:center;justify-content:center;background:rgba(130,87,255,.09);border:1px solid rgba(130,87,255,.3);border-radius:3px}
+.cbox .in .m{width:52px;height:52px;color:var(--vio-lift)}
+.cbox .xm{position:absolute;font-family:var(--mono);font-size:9px;color:var(--vio-lift)}
+.ctext .ct{font-size:15px;font-weight:700;letter-spacing:-.015em}
+.ctext .cx{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.55;margin-top:7px;max-width:290px}
+
+/* ── APPLICATIONS ── */
+.apps{padding:78px 40px 34px;height:100%;display:flex;flex-direction:column;gap:26px}
+.avrow{display:flex;align-items:center;gap:26px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.av{display:flex;flex-direction:column;align-items:center;gap:10px}
+.av .c{width:82px;height:82px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.av .c .m{width:44px;height:44px}
+.av span{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim2)}
+.av .c.a1{background:var(--vio)}
+.av .c.a2{background:var(--ink);border:1px solid var(--line2)}
+.av .c.a3{background:var(--paper)}
+.av .c.a4{background:linear-gradient(150deg,#8257FF,#3A1F8F)}
+.hdr{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 22px;height:62px;display:flex;align-items:center;gap:13px}
+.hdr .m{width:29px;height:29px;flex:0 0 29px}
+.hdr .wm{font-size:19px}
+.hdr .nav{margin-left:auto;display:flex;gap:22px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2)}
+.hdr .cta{margin-left:22px;background:var(--vio);color:#fff;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:8px 14px;border-radius:6px;white-space:nowrap;flex:0 0 auto}
+.hdr.lt{background:#fff;border-color:rgba(8,9,11,.1)}
+.hdr.lt .nav{color:rgba(8,9,11,.6)}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="frame" style="left:0;top:0;width:1820px;height:420px">
+  <div class="fl">VEILEDHOOD <b>/ PRIMARY LOCKUP</b></div>
+  <div class="fn">ROBINHOOD CHAIN</div>
+  <div class="hero">
+    <div class="slot hm" data-mark="vh"></div>
+    <div class="ht">
+      <div class="wm"><span class="a">Veiled</span><span class="b">Hood</span></div>
+      <div class="tag">Private by construction <b>·</b> built on Robinhood Chain</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONSTRUCTION -->
+<div class="frame" style="left:0;top:480px;width:890px;height:420px">
+  <div class="fl">THE MARK <b>/ CONSTRUCTION</b></div>
+  <div class="fn">ARCH × APERTURE</div>
+  <div class="constr">
+    <div class="gridbox"><div class="g"></div><div class="slot mk" data-mark="vh"></div></div>
+    <div class="notes">
+      <div class="nrow"><span class="ni">01</span><span><span class="nt">One arch band, one nested core</span><span class="nx">The Arch silhouette is load-bearing; the Aperture nesting lives inside its void.</span></span></div>
+      <div class="nrow"><span class="ni">02</span><span><span class="nt">Even 12-unit gap on all three sides</span><span class="nx">Left, right and top clearances are identical, so the void reads as deliberate.</span></span></div>
+      <div class="nrow"><span class="ni">03</span><span><span class="nt">Both forms spring from one baseline</span><span class="nx">Flat feet at the same y — the mark sits, it doesn't float.</span></span></div>
+      <div class="nrow"><span class="ni">04</span><span><span class="nt">Shelter, aperture, portal</span><span class="nx">Hood at a glance; a closing aperture on second read.</span></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOCKUPS -->
+<div class="frame" style="left:930px;top:480px;width:890px;height:420px">
+  <div class="fl">LOCKUP <b>/ SET</b></div>
+  <div class="fn">05 CONFIGURATIONS</div>
+  <div class="locks">
+    <div class="lkrow">
+      <div><div class="lk"><div class="slot m" data-mark="vh"></div><span class="wm"><span class="a">Veiled</span><span class="b">Hood</span></span></div><div class="cap">Primary · horizontal</div></div>
+    </div>
+    <div class="lkrow">
+      <div><div class="lkst"><div class="slot m" data-mark="vh"></div><span class="wm"><span class="a">Veiled</span><span class="b">Hood</span></span></div><div class="cap">Stacked</div></div>
+      <div><span class="wm" style="font-size:27px"><span class="a">Veiled</span><span class="b">Hood</span></span><div class="cap">Wordmark only</div></div>
+      <div><div class="badge"><div class="slot m white" data-mark="vh"></div></div><div class="cap">Badge</div></div>
+      <div><div class="slot symb" data-mark="vh"></div><div class="cap">Symbol</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COLOUR VARIANTS -->
+<div class="frame" style="left:0;top:960px;width:1820px;height:290px">
+  <div class="fl">COLOUR <b>/ VARIANTS</b></div>
+  <div class="fn">#8257FF ELECTRIC VIOLET</div>
+  <div class="vars">
+    <div class="vwrap"><div class="vcell v1"><div class="slot m" data-mark="vh"></div><span class="wm"><span class="a">Veiled</span><span class="b">Hood</span></span></div><div class="cap">On dark · primary</div></div>
+    <div class="vwrap"><div class="vcell v2"><div class="slot m solid" data-mark="vh"></div><span class="wm" style="color:var(--ink)"><span class="a">Veiled</span><span class="b" style="color:var(--vio)">Hood</span></span></div><div class="cap">On light</div></div>
+    <div class="vwrap"><div class="vcell v3"><div class="slot m white" data-mark="vh"></div><span class="wm oncolor"><span class="a">Veiled</span><span class="b">Hood</span></span></div><div class="cap">On violet · knockout</div></div>
+    <div class="vwrap"><div class="vcell v4"><div class="slot m ink" data-mark="vh"></div><span class="wm mono" style="color:var(--ink)"><span class="a">Veiled</span><span class="b">Hood</span></span></div><div class="cap">Mono · black</div></div>
+    <div class="vwrap"><div class="vcell v5"><div class="slot m white" data-mark="vh"></div><span class="wm mono" style="color:#fff"><span class="a">Veiled</span><span class="b">Hood</span></span></div><div class="cap">Mono · white</div></div>
+  </div>
+</div>
+
+<!-- SIZES + CLEAR SPACE -->
+<div class="frame" style="left:0;top:1310px;width:890px;height:430px">
+  <div class="fl">SCALE <b>/ CLEAR SPACE</b></div>
+  <div class="fn">COMPACT BELOW 20PX</div>
+  <div class="sizes">
+    <div class="ladder">
+      <div class="si"><div class="slot m" data-mark="vh" style="width:80px;height:80px"></div><span>80</span></div>
+      <div class="si"><div class="slot m" data-mark="vh" style="width:56px;height:56px"></div><span>56</span></div>
+      <div class="si"><div class="slot m" data-mark="vh" style="width:40px;height:40px"></div><span>40</span></div>
+      <div class="si"><div class="slot m" data-mark="vh" style="width:28px;height:28px"></div><span>28</span></div>
+      <div class="si"><div class="slot m" data-mark="vhc" style="width:20px;height:20px"></div><span>20 ·c</span></div>
+      <div class="si"><div class="slot m" data-mark="vhc" style="width:16px;height:16px"></div><span>16 ·c</span></div>
+    </div>
+    <div class="clear">
+      <div class="cbox">
+        <div class="out"></div>
+        <div class="in"><div class="slot m" data-mark="vh"></div></div>
+        <span class="xm" style="left:11px;top:44px">x</span>
+        <span class="xm" style="right:11px;bottom:44px">x</span>
+      </div>
+      <div class="ctext">
+        <div class="ct">Clear space = x</div>
+        <div class="cx">x equals the span of the mark's open void — measure between the band's inner edges. Nothing enters that margin: no type, no rule, no other logo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICATIONS -->
+<div class="frame" style="left:930px;top:1310px;width:890px;height:430px">
+  <div class="fl">APPLICATION <b>/ AVATAR + HEADER</b></div>
+  <div class="fn">X · WEB</div>
+  <div class="apps">
+    <div class="avrow">
+      <div class="av"><div class="c a1"><div class="slot m white" data-mark="vh"></div></div><span>Violet</span></div>
+      <div class="av"><div class="c a2"><div class="slot m" data-mark="vh"></div></div><span>Dark</span></div>
+      <div class="av"><div class="c a3"><div class="slot m solid" data-mark="vh"></div></div><span>Light</span></div>
+      <div class="av"><div class="c a4"><div class="slot m white" data-mark="vh"></div></div><span>Gradient</span></div>
+    </div>
+    <div class="hdr">
+      <div class="slot m" data-mark="vh"></div>
+      <span class="wm"><span class="a">Veiled</span><span class="b">Hood</span></span>
+      <div class="nav"><span>Vault</span><span>Swap</span><span>Docs</span></div>
+      <span class="cta">Launch app</span>
+    </div>
+    <div class="hdr lt">
+      <div class="slot m solid" data-mark="vh"></div>
+      <span class="wm" style="color:var(--ink)"><span class="a">Veiled</span><span class="b" style="color:var(--vio)">Hood</span></span>
+      <div class="nav"><span>Vault</span><span>Swap</span><span>Docs</span></div>
+      <span class="cta">Launch app</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const MARKS={
+vh:'<svg viewBox="0 0 100 100" fill="none"><path d="M14 88V52a36 36 0 0 1 72 0v36H75V52a25 25 0 0 0-50 0v36z" fill="currentColor"/><path d="M37 88V52a13 13 0 0 1 26 0v36z" fill="currentColor"/></svg>',
+vhc:'<svg viewBox="0 0 100 100" fill="none"><path d="M14 88V52a36 36 0 0 1 72 0v36H72V52a22 22 0 0 0-44 0v36z" fill="currentColor"/></svg>'
+};
+document.querySelectorAll('.slot[data-mark]').forEach(el=>{el.innerHTML=MARKS[el.dataset.mark]||''});
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@7.1.0
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:22.15.0
+    working_directory: ~/veiledhood
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: cd api && npm install
+      - run:
+          name: Build TypeScript
+          command: cd api && npm run build
+      - run:
+          name: Validate Build
+          command: |
+            echo "Running basic validation..."
+            node -e "console.log('Node.js is working')"
+            test -f api/dist/src/index.js && echo "Build output exists" || (echo "Build failed: dist/src/index.js not found" && exit 1)
+      - persist_to_workspace:
+          root: .
+          paths:
+            - api/package.json
+            - api/package-lock.json
+            - api/dist/
+            - ecosystem-dev.config.cjs
+            - ecosystem-prod.config.cjs
+
+  deploy-prod:
+    docker:
+      - image: cimg/base:stable
+    working_directory: ~/veiledhood
+    steps:
+      - attach_workspace:
+          at: .
+      - add_ssh_keys:
+          fingerprints:
+            - "${SSH_KEY_FINGERPRINT}"
+      - run:
+          name: Adding DigitalOcean Host to Known Hosts
+          command: |
+            echo "DROPLET_IP=${DROPLET_IP}"
+            mkdir -p ~/.ssh
+            echo "DROPLET_IP=${DROPLET_IP}"
+            ssh-keyscan -H $DROPLET_IP >> ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+      - run:
+          name: Deploy to DigitalOcean
+          command: |
+            ssh root@$DROPLET_IP 'mkdir -p /var/www/veiledhood-prod'
+            
+            # Create environment file with production variables
+            echo "Creating production environment file..."
+            for var in NODE_ENV PORT \
+                      MONGODB_URI REDIS_URL \
+                      JWT_SECRET JWT_EXPIRES_IN \
+                      RPC_URL ETH_RPC_URL \
+                      ADMIN_PRIVATE_KEY DEPLOYER_PRIVATE_KEY SIGNER_PRIVATE_KEY \
+                      VAULT_ADDRESS \
+                      TRANSFER_FEE_CONFIG_JSON TRANSFER_FEE_LEDGER_ADDRESS \
+                      WITHDRAW_DEADLINE_MAX_SEC FHEVM_RELAYER_USE_V1 \
+                      ETH_CHAIN_ID BASE_CHAIN_ID CHAIN_ID \
+                      VEILEDHOOD_ETH_TRANSFER_FEE_BPS VEILEDHOOD_ETH_TRANSFER_FEE_FIXED \
+                      ETH_VAULT_ADDRESS CORS_ORIGIN \
+                      VEILSWAP_ADDRESS VEILSWAP_FEE_BPS VEILSWAP_TREASURY_ADDRESS \
+                      SOLROUTER_API_KEY AI_MODEL_WHITELIST \
+                      TOR_ENABLED TOR_SOCKS_HOST TOR_SOCKS_PORT \
+                      AI_RATE_LIMIT_PER_USER_PER_DAY AI_RATE_LIMIT_PER_USER_PER_MIN AI_RATE_LIMIT_DISABLED \
+                      BRIDGE_ENABLED BRIDGE_ESCROW_SEED BRIDGE_GAS_PRIVATE_KEY \
+                      DEBRIDGE_API_URL DEBRIDGE_STATS_API_URL DEBRIDGE_REFERRAL_CODE \
+                      BRIDGE_FEE_BPS BRIDGE_USER_DAILY_QUOTA \
+                      X402_ENABLED SHROUDFI_MASTER_SEED SHROUDFI_AGENT_PRIVATE_KEY BASE_RPC_URL SHROUDFI_TREASURY_WALLET \
+                      X402_AI_PRICE_MAP_JSON; do
+
+              prefixed_var="PROD_${var}"
+              val="${!prefixed_var}"
+
+              if [ -n "$val" ]; then
+                echo "${var}=${val}" >> .env
+              fi
+            done
+            
+            # Set default production values if not provided
+            echo "NODE_ENV=production" >> .env
+            echo "PORT=6619" >> .env
+
+            tar -czf deploy.tar.gz api/package.json api/dist ecosystem-prod.config.cjs .env
+            scp deploy.tar.gz root@$DROPLET_IP:/var/www/veiledhood-prod/
+
+            ssh root@$DROPLET_IP 'cd /var/www/veiledhood-prod && \
+            tar -xzf deploy.tar.gz && \
+            rm deploy.tar.gz && \
+            
+            # Create logs directory
+            mkdir -p logs && \
+            
+            # Ensure Node.js and npm are available
+            source ~/.profile && \
+            source ~/.bashrc && \
+            export NVM_DIR="$HOME/.nvm" && \
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+            
+            # Install production dependencies
+            cd api && npm install --production && cd .. && \
+            node api/dist/scripts/backfill-orphan-chain.js && \
+            
+            # Install PM2 globally if not already installed
+            npm install -g pm2 && \
+            
+            # Stop existing process if running
+            pm2 delete veiledhood-prod || true && \
+            
+            # Start the application with PM2 using ecosystem file
+            pm2 start /var/www/veiledhood-prod/ecosystem-prod.config.cjs && \
+            pm2 save'
+
+  deploy-dev:
+    docker:
+      - image: cimg/base:stable
+    working_directory: ~/veiledhood
+    steps:
+      - attach_workspace:
+          at: .
+      - add_ssh_keys:
+          fingerprints:
+            - "${SSH_KEY_FINGERPRINT}"
+      - run:
+          name: Adding DigitalOcean Host to Known Hosts
+          command: |
+            echo "DROPLET_IP=${DROPLET_IP}"
+            mkdir -p ~/.ssh
+            echo "DROPLET_IP=${DROPLET_IP}"
+            ssh-keyscan -H $DROPLET_IP >> ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+      - run:
+          name: Deploy to DigitalOcean
+          command: |
+            ssh root@$DROPLET_IP 'mkdir -p /var/www/veiledhood-dev'
+            
+            # Create environment file with development variables
+            echo "Creating development environment file..."
+            for var in NODE_ENV PORT \
+                      MONGODB_URI REDIS_URL \
+                      JWT_SECRET JWT_EXPIRES_IN \
+                      RPC_URL ETH_RPC_URL \
+                      ADMIN_PRIVATE_KEY DEPLOYER_PRIVATE_KEY SIGNER_PRIVATE_KEY \
+                      VAULT_ADDRESS \
+                      TRANSFER_FEE_CONFIG_JSON TRANSFER_FEE_LEDGER_ADDRESS \
+                      WITHDRAW_DEADLINE_MAX_SEC FHEVM_RELAYER_USE_V1 \
+                      ETH_CHAIN_ID BASE_CHAIN_ID CHAIN_ID \
+                      VEILEDHOOD_ETH_TRANSFER_FEE_BPS VEILEDHOOD_ETH_TRANSFER_FEE_FIXED \
+                      ETH_VAULT_ADDRESS CORS_ORIGIN INDEXER_DISABLED \
+                      VEILSWAP_ADDRESS VEILSWAP_FEE_BPS VEILSWAP_TREASURY_ADDRESS \
+                      SOLROUTER_API_KEY AI_MODEL_WHITELIST \
+                      TOR_ENABLED TOR_SOCKS_HOST TOR_SOCKS_PORT \
+                      AI_RATE_LIMIT_PER_USER_PER_DAY AI_RATE_LIMIT_PER_USER_PER_MIN AI_RATE_LIMIT_DISABLED \
+                      BRIDGE_ENABLED BRIDGE_ESCROW_SEED BRIDGE_GAS_PRIVATE_KEY \
+                      DEBRIDGE_API_URL DEBRIDGE_STATS_API_URL DEBRIDGE_REFERRAL_CODE \
+                      BRIDGE_FEE_BPS BRIDGE_USER_DAILY_QUOTA \
+                      X402_ENABLED SHROUDFI_MASTER_SEED SHROUDFI_AGENT_PRIVATE_KEY BASE_RPC_URL SHROUDFI_TREASURY_WALLET \
+                      X402_AI_PRICE_MAP_JSON; do
+
+              prefixed_var="DEV_${var}"
+              val="${!prefixed_var}"
+
+              if [ -n "$val" ]; then
+                echo "${var}=${val}" >> .env
+              fi
+            done
+            
+            # Set default development values if not provided
+            echo "NODE_ENV=development" >> .env
+            echo "PORT=6629" >> .env
+
+            tar -czf deploy.tar.gz api/package.json api/dist ecosystem-dev.config.cjs .env
+            scp deploy.tar.gz root@$DROPLET_IP:/var/www/veiledhood-dev/
+
+            ssh root@$DROPLET_IP 'cd /var/www/veiledhood-dev && \
+            tar -xzf deploy.tar.gz && \
+            rm deploy.tar.gz && \
+            
+            # Create logs directory
+            mkdir -p logs && \
+            
+            # Ensure Node.js and npm are available
+            source ~/.profile && \
+            source ~/.bashrc && \
+            export NVM_DIR="$HOME/.nvm" && \
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+            
+            # Install production dependencies only (no dev deps needed on server)
+            cd api && npm install --production && cd .. && \
+            node api/dist/scripts/backfill-orphan-chain.js && \
+            
+            # Install PM2 globally if not already installed
+            npm install -g pm2 && \
+            
+            # Stop existing process if running
+            pm2 delete veiledhood-dev || true && \
+            
+            # Start the application with PM2 using ecosystem file
+            pm2 start /var/www/veiledhood-dev/ecosystem-dev.config.cjs && \
+            pm2 save'
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - develop
+                - main
+      - deploy-dev:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+      - deploy-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main

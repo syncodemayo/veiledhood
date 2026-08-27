@@ -1,0 +1,28 @@
+{
+  "name": "@veiledhood/agent-crypto",
+  "version": "0.1.0",
+  "description": "Browser + Node crypto primitives for Veiledhood encrypted agent strategies (HKDF, AES-GCM, passphrase envelope).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
+    "./aesgcm": { "import": "./dist/aesgcm.js", "types": "./dist/aesgcm.d.ts" },
+    "./hkdf": { "import": "./dist/hkdf.js", "types": "./dist/hkdf.d.ts" },
+    "./envelope": { "import": "./dist/envelope.js", "types": "./dist/envelope.d.ts" },
+    "./keys": { "import": "./dist/keys.js", "types": "./dist/keys.d.ts" }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test src/**/*.test.ts",
+    "test:watch": "tsx --test --watch src/**/*.test.ts"
+  },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22.0.0" },
+  "publishConfig": { "access": "public" },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

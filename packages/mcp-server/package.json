@@ -1,0 +1,40 @@
+{
+  "name": "@veiledhood/mcp-server",
+  "version": "0.5.0",
+  "description": "MCP stdio server for Veiledhood encrypted agents, private wallet context, and encrypted data storage. Works with Claude Code, Claude Desktop, Cursor, Continue, Cline.",
+  "type": "module",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "bin": {
+    "veiledhood-mcp": "bin/veiledhood-mcp.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test src/**/*.test.ts"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@noble/hashes": "^1.8.0",
+    "@shroud-fi/agent-runtime": "^0.1.0",
+    "@shroud-fi/x402": "^0.1.0",
+    "@veiledhood/agent-crypto": "0.1.0",
+    "viem": "^2.52.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

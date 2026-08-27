@@ -1,0 +1,16 @@
+node_modules/
+.agents
+*-lock.json
+*-lock.yaml
+
+dist/
+build/
+
+.env
+.xdg/
+
+.DS_Store
+
+mcp-server.md
+
+.npmrc

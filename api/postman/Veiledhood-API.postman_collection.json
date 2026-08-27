@@ -1,0 +1,284 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-veiledhood-api",
+    "name": "Veiledhood API",
+    "description": "Veiledhood API: auth, user profile, tag registration, deposits, transfers (including public fee quote), withdraw signature + record. Set `token` after Verify signature.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Get login message",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/auth/message"
+          }
+        },
+        {
+          "name": "Verify signature",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Welcome to Veiledhood! Sign this message to Login to the app\",\n  \"signature\": \"0x\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/verify"
+          }
+        },
+        {
+          "name": "Validate JWT",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/auth/validate"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/user/me"
+          }
+        },
+        {
+          "name": "Register tag",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/user/register-tag",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phase\": \"usdc\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deposits",
+      "item": [
+        {
+          "name": "Record deposit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"txHash\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n  \"currency\": \"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\",\n  \"amount\": \"1000000\"\n}"
+            },
+            "url": "{{baseUrl}}/deposits"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transfers",
+      "item": [
+        {
+          "name": "Fee quote",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transfers/fee-quote?amount=1000000&currency=native",
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "1000000",
+                  "description": "Positive integer string (raw units)"
+                },
+                {
+                  "key": "currency",
+                  "value": "native",
+                  "description": "Ledger key: `native` for ETH vault (bps-only fees) or lowercase USDC token address for ERC-20 vault"
+                }
+              ]
+            },
+            "description": "No auth. Fee rules depend on currency (USDC: TRANSFER_FEE_FIXED+BPS; native: ETH_TRANSFER_FEE_FIXED+ETH_TRANSFER_FEE_BPS)."
+          }
+        },
+        {
+          "name": "Record transfer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"txHash\": \"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n  \"currency\": \"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\",\n  \"amount\": \"1000000\",\n  \"to\": \"0x70997970C51812dc3A010C7d01b50e0d17dc79C8\"\n}"
+            },
+            "url": "{{baseUrl}}/transfers"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Withdraw",
+      "item": [
+        {
+          "name": "Get withdraw signature",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('withdrawDeadline', Math.floor(Date.now() / 1000) + 400);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"1000000\",\n  \"deadline\": {{withdrawDeadline}},\n  \"currency\": \"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\"\n}"
+            },
+            "url": "{{baseUrl}}/user/withdraw-signature"
+          }
+        },
+        {
+          "name": "Record withdraw",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"txHash\": \"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\n  \"currency\": \"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913\",\n  \"amount\": \"1000000\"\n}"
+            },
+            "url": "{{baseUrl}}/withdraws"
+          }
+        }
+      ]
+    }
+  ]
+}

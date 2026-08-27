@@ -1,0 +1,33 @@
+/* Supplemental — not in the original design CSS files, kept separate. */
+
+#root{height:100%;overflow:auto}
+
+/* Muted description text — for standalone paragraphs/lines outside .empty,
+   which is where the design's .ex class is otherwise scoped. */
+.desc{font-family:var(--mono);font-size:12px;color:var(--tx3);line-height:1.6;margin:0}
+
+/* .mdl-b needs flex:1 + min-height:0 to actually become the scrollable region
+   within .mdl's max-height:92vh column — without it, long modal content pushes
+   footer-less action buttons off-screen with no way to scroll to them. */
+.mdl-b{flex:1;min-height:0}
+
+/* .btn-block sets width:100%, which inside a flex row (.mdl-f) makes each
+   button demand the FULL row width as its flex-basis — since flex items
+   default to min-width:auto (not 0), they can't shrink below that and the
+   row overflows the modal. Constrain them to actually share the row. */
+.mdl-f > .btn-block{width:auto;flex:1;min-width:0}
+
+.onboard{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(60% 50% at 50% 0%,var(--vio-dim),transparent)}
+.onboard-card{width:100%;max-width:400px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r4);padding:32px 28px}
+.ob-h{font-size:22px;font-weight:800;letter-spacing:-.03em;text-align:center;margin:0 0 8px}
+.ob-p{font-family:var(--mono);font-size:12px;color:var(--tx3);text-align:center;line-height:1.6;margin:0}
+.ob-dots{display:flex;justify-content:center;gap:6px;margin-top:26px}
+.ob-dots .dot{width:6px;height:6px;border-radius:100px;background:var(--p4)}
+.ob-dots .dot.on{width:20px;background:var(--vio)}
+
+.chat-body{min-height:340px;max-height:460px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px}
+.chat-msg{max-width:78%;padding:10px 13px;border-radius:var(--r3);font-size:13px;line-height:1.5}
+.chat-msg.user{align-self:flex-end;background:var(--vio);color:#fff}
+.chat-msg.agent{align-self:flex-start;background:var(--p2);border:1px solid var(--line)}
+.chat-row{display:flex;gap:9px;align-items:flex-start}
+.chat-avatar{width:26px;height:26px;border-radius:50%;background:var(--vio-dim);color:var(--vio-lift);display:flex;align-items:center;justify-content:center;flex:0 0 auto}

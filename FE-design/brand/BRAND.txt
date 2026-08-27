@@ -1,0 +1,74 @@
+VEILEDHOOD — BRAND ASSETS
+=========================
+
+THE MARK
+The Arch x Aperture: one arch band with a nested core inside its void.
+Reads as hood at a glance, closing aperture on second read.
+
+Artboard note: the mark's ink spans 72 of 100 viewBox units — there are
+14 units of clear padding on each side, built in. Do not add padding on
+top of it when placing in a component.
+
+
+COLOUR
+Electric violet   #8257FF   primary, use on dark and on light
+Violet lift       #A88CFF   the mark and "Hood" on dark grounds
+Violet deep       #5B32D6   gradient end only
+Ink               #08090B   dark ground
+Paper             #F4F4F6   light ground
+
+
+TYPE
+Archivo    wordmark and display. "Veiled" 500, "Hood" 800.
+DM Mono    labels, micro-type, data.
+
+Wordmark is set in Archivo, so wordmark assets ship as PNG only.
+The mark itself ships as SVG — always prefer the SVG.
+
+
+CLEAR SPACE
+x = the span of the mark's open void, measured between the band's
+inner edges (50 of 100 viewBox units = half the artboard width).
+Nothing enters that margin: no type, no rule, no other logo.
+
+
+FILES
+
+X / social
+  x-avatar-gradient-1024.png    recommended for X — most presence in a circle crop
+  x-avatar-violet-1024.png      flat violet, the safest all-round avatar
+  x-avatar-violet-512.png       smaller source if 1024 is rejected
+  x-avatar-dark-1024.png        for dark-mode contexts
+  x-avatar-light-1024.png       for light-mode contexts
+  x-banner-1500x500.png         centred lockup — bottom-left kept clear for the avatar
+  x-banner-alt-1500x500.png     right-weighted variant, glow on the left
+
+Lockups
+  lockup-horizontal-dark.png    2000x500, primary
+  lockup-horizontal-light.png   2000x500
+  lockup-stacked-dark.png       1200x1000
+  wordmark-dark.png             1800x400, no symbol
+  wordmark-light.png            1800x400, no symbol
+
+Mark only (transparent ground)
+  mark-violet.svg / mark-white.svg / mark-black.svg
+  mark-compact-violet.svg / mark-compact-white.svg
+  mark-violet-1024-transparent.png
+  mark-white-1024-transparent.png
+  mark-black-1024-transparent.png
+
+Favicon / app icon
+  favicon-512.png  favicon-64.png  favicon-32.png
+
+
+COMPACT MARK
+Below 20px the nested core closes up, so the compact mark drops it and
+keeps the band alone. Use compact for favicons, token lists and any slot
+at or under 20px. Use the full mark everywhere else.
+
+
+DO NOT
+- Do not add padding around the mark; it is already built in.
+- Do not recolour the mark outside the palette above.
+- Do not set the wordmark in any face other than Archivo.
+- Do not place the wordmark on the violet ground in violet; knock it out to white.
