@@ -87,7 +87,7 @@ jobs:
             
             # Set default production values if not provided
             echo "NODE_ENV=production" >> .env
-            echo "PORT=6619" >> .env
+            echo "PORT=6828" >> .env
 
             tar -czf deploy.tar.gz api/package.json api/dist ecosystem-prod.config.cjs .env
             scp deploy.tar.gz root@$DROPLET_IP:/var/www/veiledhood-prod/
@@ -175,7 +175,7 @@ jobs:
             
             # Set default development values if not provided
             echo "NODE_ENV=development" >> .env
-            echo "PORT=6629" >> .env
+            echo "PORT=6829" >> .env
 
             tar -czf deploy.tar.gz api/package.json api/dist ecosystem-dev.config.cjs .env
             scp deploy.tar.gz root@$DROPLET_IP:/var/www/veiledhood-dev/
