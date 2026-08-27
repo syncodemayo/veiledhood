@@ -72,7 +72,7 @@ export function LandingPage() {
           </div>
           <div className="rt">
             <Btn kind="ghost" size="sm">Docs</Btn>
-            <a href={`${APP_URL}/onboarding`}>
+            <a href={`${APP_URL}`}>
               <Btn kind="pri" size="sm">Launch app</Btn>
             </a>
           </div>
@@ -96,7 +96,7 @@ export function LandingPage() {
               traceable trail, and give AI agents real tooling over your positions — without handing over plaintext config or keys.
             </p>
             <div className="cta-row rv d2">
-              <a href={`${APP_URL}/onboarding`}>
+              <a href={`${APP_URL}`}>
                 <Btn kind="pri" size="lg">Launch app</Btn>
               </a>
               <a href="#stack">
@@ -314,7 +314,7 @@ export function LandingPage() {
           <h2>Stop publishing your position.</h2>
           <p className="lead">Deposit, shield, and give your agents real tools — without giving up your privacy.</p>
           <div className="cta-row">
-            <a href={`${APP_URL}/onboarding`}>
+            <a href={`${APP_URL}`}>
               <Btn kind="pri" size="lg">Launch app</Btn>
             </a>
             <a href="#stack">
@@ -344,7 +344,7 @@ export function LandingPage() {
             <div className="fg">
               <div className="fgt">Resources</div>
               <a href="#faq">FAQ</a>
-              <a href={`${APP_URL}/onboarding`}>Launch app</a>
+              <a href={`${APP_URL}`}>Launch app</a>
             </div>
           </div>
           <div className="fb">
