@@ -17,7 +17,7 @@
    row overflows the modal. Constrain them to actually share the row. */
 .mdl-f > .btn-block{width:auto;flex:1;min-width:0}
 
-.onboard{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(60% 50% at 50% 0%,var(--vio-dim),transparent)}
+.onboard{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(60% 50% at 50% 0%,var(--vio-dim),transparent)}
 .onboard-card{width:100%;max-width:400px;background:var(--p1);border:1px solid var(--line);border-radius:var(--r4);padding:32px 28px}
 .ob-h{font-size:22px;font-weight:800;letter-spacing:-.03em;text-align:center;margin:0 0 8px}
 .ob-p{font-family:var(--mono);font-size:12px;color:var(--tx3);text-align:center;line-height:1.6;margin:0}

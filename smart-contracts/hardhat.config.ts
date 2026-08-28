@@ -24,7 +24,7 @@ const forkEnabled = process.env.FORK === "1" && Boolean(RPC_URL);
 
 if (!hasLiveRpc) {
   console.warn(
-    "Hardhat config: PRIVATE_KEY/RPC_URL not set; live network (robinhoodTestnet) disabled. Local tests still run."
+    "Hardhat config: PRIVATE_KEY/RPC_URL not set; live network (robinhoodMainnet) disabled. Local tests still run."
   );
 }
 if (!hasVerification) {
@@ -53,10 +53,10 @@ const config: HardhatUserConfig = {
     },
     ...(hasLiveRpc
       ? {
-          robinhoodTestnet: {
+          robinhoodMainnet: {
             url: RPC_URL,
             accounts: [PRIVATE_KEY as `0x${string}`],
-            chainId: 46630,
+            chainId: 4663,
           },
         }
       : {}),
@@ -75,11 +75,11 @@ const config: HardhatUserConfig = {
           apiKey: VERIFICATION_API_KEY,
           customChains: [
             {
-              network: "robinhoodTestnet",
-              chainId: 46630,
+              network: "robinhoodMainnet",
+              chainId: 4663,
               urls: {
-                apiURL: "https://explorer.testnet.chain.robinhood.com/api",
-                browserURL: "https://explorer.testnet.chain.robinhood.com",
+                apiURL: "https://robinhoodchain.blockscout.com/api",
+                browserURL: "https://robinhoodchain.blockscout.com",
               },
             },
           ],

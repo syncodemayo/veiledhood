@@ -1,23 +1,28 @@
 import { useState } from "react";
+import { useChainId, useSwitchChain } from "wagmi";
 import { TITLES, type RouteId } from "./navConfig";
 import { IcMenu, IcEye, IcEyeOff, IcAlert } from "../icons/Icons";
 import { cx } from "../primitives/primitives";
-import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
-import { ROBINHOOD_TESTNET_CHAIN_ID } from "../../lib/wallet";
 import { errorMessage } from "../../lib/errors";
+import { robinhoodMainnet } from "../../config/wagmi";
+
+const CHAIN_NAMES: Record<number, string> = {
+  [robinhoodMainnet.id]: "Robinhood Chain",
+};
 
 export function Top({ route, onMenu, visible, toggleVisible }: { route: RouteId; onMenu: () => void; visible: boolean; toggleVisible: () => void }) {
   const [t, x] = TITLES[route] ?? ["", ""];
-  const { chainId, switchToRobinhoodTestnet } = useAuth();
+  const chainId = useChainId();
+  const { switchChainAsync } = useSwitchChain();
   const { toast } = useToast();
   const [switching, setSwitching] = useState(false);
-  const wrongChain = chainId !== null && chainId !== ROBINHOOD_TESTNET_CHAIN_ID;
+  const knownChain = CHAIN_NAMES[chainId];
 
   async function handleSwitch() {
     setSwitching(true);
     try {
-      await switchToRobinhoodTestnet();
+      await switchChainAsync({ chainId: robinhoodMainnet.id });
     } catch (e) {
       toast("Couldn't switch network", errorMessage(e, "Try switching manually in your wallet."), "neg");
     } finally {
@@ -46,7 +51,7 @@ export function Top({ route, onMenu, visible, toggleVisible }: { route: RouteId;
           {visible ? <IcEye size={14} /> : <IcEyeOff size={14} />}
           <span className="nl">{visible ? "Values shown" : "Values hidden"}</span>
         </button>
-        {wrongChain ? (
+        {!knownChain ? (
           <button
             className="netchip focus-ring"
             onClick={handleSwitch}
@@ -59,7 +64,7 @@ export function Top({ route, onMenu, visible, toggleVisible }: { route: RouteId;
         ) : (
           <span className="netchip">
             <span className="nd pulse-dot" />
-            <span className="nl">Robinhood Testnet Chain</span>
+            <span className="nl">{knownChain}</span>
           </span>
         )}
       </div>

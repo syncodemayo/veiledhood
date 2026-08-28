@@ -81,6 +81,15 @@ export const IcTokenUsdc = ({ size = 26 }: IconProps) => (
   </svg>
 );
 
+export const IcTokenUsdg = ({ size = 26 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+    <circle cx="16" cy="16" r="16" fill="#000" />
+    <text x="16" y="21" textAnchor="middle" fontSize="15" fontWeight="700" fill="#fff" fontFamily="sans-serif">
+      $
+    </text>
+  </svg>
+);
+
 export const IcMetaMask = (p: IconProps) => <S {...p} style={{ color: "#E4761B", ...p.style }}><rect x="3.5" y="6" width="17" height="13" rx="2.5" /><path d="M3.5 10.5h17" /><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none" /></S>;
 
 export const IcRobinhood = ({ size = 18 }: IconProps) => (

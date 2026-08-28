@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { parseUnits, formatUnits } from "ethers";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Panel, Tabs, AssetInput, DRow, Btn } from "../components/primitives/primitives";
+import { IcShield } from "../components/icons/Icons";
 import { useConfirm, type StepReporter } from "../context/ConfirmContext";
 import { api } from "../lib/api";
 import { VAULT_ASSETS, getVaultAsset, type VaultAssetId } from "../config/vaultAssets";
@@ -80,11 +81,15 @@ export function Transfer() {
           <p className="desc" style={{ marginBottom: 14 }}>
             Sends from your shielded balance directly to another address. Settled off-chain against the Merkle ledger — no public on-chain trail for this transfer.
           </p>
+          <div className="pbar" style={{ marginBottom: 14 }}>
+            <IcShield size={15} />
+            <span className="pt">Transfers spend from your shielded balance only — deposit into the Vault first if you haven't already.</span>
+          </div>
           <AssetInput
             label="Amount"
             value={amt}
             onChange={setAmt}
-            token={{ sym: asset.symbol, chain: "Robinhood Testnet Chain" }}
+            token={{ sym: asset.symbol, chain: "Robinhood Chain" }}
             balance={Number(formatUnits(shieldedBalance, asset.decimals))}
             onMax={() => setAmt(formatUnits(shieldedBalance, asset.decimals))}
           />

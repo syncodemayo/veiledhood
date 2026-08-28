@@ -40,6 +40,19 @@ export type ActivityItem =
       merkleAfterTransferTxHash?: string | null;
       merkleAfterPayoutTxHash?: string | null;
       counterparty: string;
+    }
+  | {
+      kind: "swap";
+      tokenIn: string;
+      tokenOut: string;
+      amountIn: string;
+      amountOut?: string;
+      chainId: number;
+      createdAt: string;
+      idempotencyKey: string;
+      status: string;
+      swapTxHash?: string | null;
+      adminWithdrawTxHash?: string | null;
     };
 
 export interface UserActivityResponse {
@@ -159,6 +172,46 @@ export interface AgentEnvelopeWireBody {
 export interface ExistingAgentEnvelope extends AgentEnvelopeWireBody {
   createdAt: string;
   updatedAt: string;
+}
+
+export interface VeilswapPoolKey {
+  currency0: string;
+  currency1: string;
+  fee: number;
+  tickSpacing: number;
+  hooks: string;
+}
+
+export interface VeilswapPair {
+  tokenIn: string;
+  tokenOut: string;
+  symbolIn: string;
+  symbolOut: string;
+  decimalsIn: number;
+  decimalsOut: number;
+  poolKey: VeilswapPoolKey;
+}
+
+export interface VeilswapQuoteResponse {
+  amountOut: string;
+  poolKey: VeilswapPoolKey;
+}
+
+export interface VeilswapDepositResponse {
+  status: "created" | "duplicate";
+}
+
+export interface VeilswapMeResponse {
+  balances: { tokenAddress: string; totalAmount: string; chainId: number }[];
+}
+
+export interface SwapStatusResponse {
+  idempotencyKey: string;
+  status: "pending" | "swap_completed" | "payout_completed" | "failed";
+  amountOut?: string;
+  swapTxHash?: string;
+  adminWithdrawTxHash?: string;
+  payoutError?: string;
 }
 
 export interface X402DiscoveryResponse {

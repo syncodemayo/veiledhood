@@ -1,43 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mark, IcShield, IcCheck, IcMetaMask, IcRobinhood, IcWalletConnect } from "../components/icons/Icons";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Mark, IcShield, IcCheck } from "../components/icons/Icons";
 import { Btn } from "../components/primitives/primitives";
 import { useAuth } from "../context/AuthContext";
 import { usePrivacy } from "../context/PrivacyContext";
 import { useToast } from "../context/ToastContext";
-import { getInjectedProvider, type WalletKind } from "../lib/wallet";
-
-const WALLETS: { id: string; name: string; sub: string; kind: WalletKind; icon: typeof IcMetaMask }[] = [
-  { id: "injected", name: "Browser wallet", sub: "MetaMask or any injected EIP-1193 wallet", kind: "injected", icon: IcMetaMask },
-  { id: "rh", name: "Robinhood Wallet", sub: "Uses your injected provider if it's Robinhood's", kind: "injected", icon: IcRobinhood },
-  { id: "wc", name: "WalletConnect", sub: "Scan a QR code with any WalletConnect-compatible wallet", kind: "walletconnect", icon: IcWalletConnect },
-];
 
 export function Onboarding() {
   const [step, setStep] = useState(0);
-  const [connectingId, setConnectingId] = useState<string | null>(null);
-  const { connect, connecting, error, address } = useAuth();
+  const { token, error, address, connecting } = useAuth();
   const { visible, toggle } = usePrivacy();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const hasInjected = getInjectedProvider() !== null;
 
   useEffect(() => {
     if (error) toast("Couldn't connect", error, "neg");
   }, [error, toast]);
 
-  async function pick(id: string, kind: WalletKind) {
-    setConnectingId(id);
-    if (kind === "injected") toast("Check your wallet", "Approve the connection request in your wallet extension.");
-    try {
-      await connect(kind);
-      setStep(1);
-    } catch {
-      // error surfaced via useAuth().error
-    } finally {
-      setConnectingId(null);
-    }
-  }
+  useEffect(() => {
+    if (token) setStep(1);
+  }, [token]);
 
   return (
     <div className="onboard">
@@ -49,36 +32,10 @@ export function Onboarding() {
           <>
             <h1 className="ob-h">Connect your wallet</h1>
             <p className="ob-p">Sign a message to authenticate. Nothing is transacted until you approve a specific action.</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 20 }}>
-              {WALLETS.map((w) => {
-                const unavailable = w.kind === "injected" && !hasInjected;
-                return (
-                  <button
-                    key={w.id}
-                    disabled={connecting || unavailable}
-                    onClick={() => pick(w.id, w.kind)}
-                    className="lrow hov"
-                    style={{
-                      opacity: unavailable ? 0.45 : 1,
-                      cursor: unavailable ? "not-allowed" : connecting ? "not-allowed" : "pointer",
-                      border: "1px solid var(--line)",
-                      borderRadius: "var(--r3)",
-                      width: "100%",
-                      textAlign: "left",
-                    }}
-                    title={unavailable ? "No injected wallet extension detected in this browser" : undefined}
-                  >
-                    <span className="lico">
-                      {connectingId === w.id && connecting ? <span className="spin" style={{ display: "block", width: 15, height: 15, border: "1.5px solid currentColor", borderTopColor: "transparent", borderRadius: "50%" }} /> : <w.icon size={19} />}
-                    </span>
-                    <div className="lmain">
-                      <div className="lt">{w.name}</div>
-                      <div className="lx">{unavailable ? "Not detected — install a browser wallet extension" : w.sub}</div>
-                    </div>
-                  </button>
-                );
-              })}
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+              <ConnectButton label="Connect wallet" showBalance={false} chainStatus="none" />
             </div>
+            {connecting && <div className="desc" style={{ textAlign: "center", marginTop: 16 }}>Check your wallet — sign the message to continue.</div>}
           </>
         )}
         {step === 1 && (

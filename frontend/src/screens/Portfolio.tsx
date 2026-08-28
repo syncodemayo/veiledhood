@@ -1,27 +1,35 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits } from "ethers";
 import { api } from "../lib/api";
 import { usePrivacy, Mask } from "../context/PrivacyContext";
-import { Panel, Stat, Ring, ListRow, Pill, Sk, usd, fmt } from "../components/primitives/primitives";
+import { Panel, Stat, Ring, ListRow, Pill, Sk, usd, fmt, fmtBal, Btn } from "../components/primitives/primitives";
 import { IcHistory, IcExternal } from "../components/icons/Icons";
 import type { WalletContextFull, UserActivityResponse, ActivityItem } from "../types/api";
-import { ROBINHOOD_TESTNET_EXPLORER } from "../lib/wallet";
+import { ROBINHOOD_MAINNET_EXPLORER } from "../lib/wallet";
 import { resolveCurrency } from "../config/vaultAssets";
 
 function formatCurrencyAmount(rawAmount: string, currency: string): string {
   const asset = resolveCurrency(currency);
   const decimals = asset?.decimals ?? 18;
-  return fmt(Number(formatUnits(rawAmount, decimals)), 2);
+  return fmtBal(Number(formatUnits(rawAmount, decimals)));
 }
 
 function currencySymbol(currency: string): string {
   const asset = resolveCurrency(currency);
   if (asset) return asset.symbol;
-  if (currency.toLowerCase() === "native") return "ETH";
+  const lc = currency.toLowerCase();
+  if (lc === "native" || lc === "0x0000000000000000000000000000000000000000") return "ETH";
   return `${currency.slice(0, 6)}…${currency.slice(-4)}`;
 }
 
 function activityLabel(item: ActivityItem): { title: string; sub: string; value: string } {
+  if (item.kind === "swap") {
+    const symIn = currencySymbol(item.tokenIn);
+    const symOut = currencySymbol(item.tokenOut);
+    const amountOut = item.amountOut ? formatCurrencyAmount(item.amountOut, item.tokenOut) : "…";
+    return { title: "Swap", sub: `${symIn} → ${symOut}`, value: `+${amountOut} ${symOut}` };
+  }
   const amount = formatCurrencyAmount(item.amount, item.currency);
   const sym = currencySymbol(item.currency);
   if (item.kind === "deposit") return { title: "Deposit", sub: sym, value: `+${amount} ${sym}` };
@@ -33,16 +41,22 @@ function activityLabel(item: ActivityItem): { title: string; sub: string; value:
   };
 }
 
+const ACTIVITY_PAGE_SIZE = 5;
+
 export function Portfolio() {
   const { visible } = usePrivacy();
+  const [activityPage, setActivityPage] = useState(0);
 
   const ctxQuery = useQuery({
     queryKey: ["context-full"],
     queryFn: () => api.post<WalletContextFull>("/context/full", {}),
   });
   const activityQuery = useQuery({
-    queryKey: ["user-activity"],
-    queryFn: () => api.get<UserActivityResponse>("/user/activity?limit=20"),
+    queryKey: ["user-activity", activityPage],
+    queryFn: () =>
+      api.get<UserActivityResponse>(
+        `/user/activity?limit=${ACTIVITY_PAGE_SIZE}&offset=${activityPage * ACTIVITY_PAGE_SIZE}`
+      ),
   });
 
   const ctx = ctxQuery.data;
@@ -111,7 +125,7 @@ export function Portfolio() {
                       {h.sym} {h.shielded && <Pill tone="vio">Shielded</Pill>}
                     </span>
                     <span className="num">
-                      <Mask show={visible}>{fmt(h.amt, 2)}</Mask>
+                      <Mask show={visible}>{fmtBal(h.amt)}</Mask>
                     </span>
                   </div>
                 ))}
@@ -134,7 +148,10 @@ export function Portfolio() {
         {activityQuery.data?.items.length === 0 && <div className="empty"><div className="et">No activity yet</div><div className="ex">Deposits, withdrawals and transfers will show up here.</div></div>}
         {activityQuery.data?.items.map((item, i) => {
           const l = activityLabel(item);
-          const txHash = item.kind !== "transfer" ? item.txHash : item.adminWithdrawTxHash ?? undefined;
+          const txHash =
+            item.kind === "transfer" || item.kind === "swap"
+              ? item.adminWithdrawTxHash ?? (item.kind === "swap" ? item.swapTxHash : undefined) ?? undefined
+              : item.txHash;
           return (
             <ListRow
               key={i}
@@ -145,7 +162,7 @@ export function Portfolio() {
               end={
                 txHash ? (
                   <a
-                    href={`${ROBINHOOD_TESTNET_EXPLORER}/tx/${txHash}`}
+                    href={`${ROBINHOOD_MAINNET_EXPLORER}/tx/${txHash}`}
                     target="_blank"
                     rel="noreferrer"
                     className="lend"
@@ -164,6 +181,17 @@ export function Portfolio() {
             />
           );
         })}
+        {(activityPage > 0 || activityQuery.data?.hasMore) && (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 18px" }}>
+            <Btn kind="sec" size="sm" onClick={() => setActivityPage((p) => Math.max(0, p - 1))} disabled={activityPage === 0}>
+              Previous
+            </Btn>
+            <span className="desc">Page {activityPage + 1}</span>
+            <Btn kind="sec" size="sm" onClick={() => setActivityPage((p) => p + 1)} disabled={!activityQuery.data?.hasMore}>
+              Next
+            </Btn>
+          </div>
+        )}
       </Panel>
     </div>
   );

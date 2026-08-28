@@ -151,8 +151,18 @@ async function markSwapFailure(
 ): Promise<void> {
   const msg = err instanceof Error ? err.message : String(err);
   const current = await Swap.findOne({ idempotencyKey })
-    .select("swapTxHash")
-    .lean<{ swapTxHash?: string } | null>();
+    .select("swapTxHash adminWithdrawTxHash")
+    .lean<{ swapTxHash?: string; adminWithdrawTxHash?: string } | null>();
+  // A concurrent call (e.g. the poll-triggered retry racing the original run)
+  // can already have completed the payout by the time this one's tx reverts
+  // (e.g. NullifierAlreadyUsed). Don't stomp a real success back to failed/pending.
+  if (current?.adminWithdrawTxHash) {
+    await Swap.updateOne(
+      { idempotencyKey },
+      { $set: { status: "payout_completed" }, $unset: { payoutError: "" } }
+    );
+    return;
+  }
   const status = current?.swapTxHash ? "swap_completed" : "failed";
   await Swap.updateOne({ idempotencyKey }, { $set: { payoutError: msg, status } });
 }

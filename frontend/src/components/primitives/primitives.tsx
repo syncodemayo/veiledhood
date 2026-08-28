@@ -1,9 +1,15 @@
 import { useEffect, useId, type ReactNode, type ButtonHTMLAttributes } from "react";
-import { IcCheck, IcClose, IcCopy, IcAlert, IcTokenEth, IcTokenUsdc } from "../icons/Icons";
+import { IcCheck, IcClose, IcCopy, IcAlert, IcTokenEth, IcTokenUsdg } from "../icons/Icons";
 
 export const cx = (...a: Array<string | false | undefined | null>) => a.filter(Boolean).join(" ");
 export const fmt = (n: number, d = 2) => n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 export const usd = (n: number, d = 2) => "$" + fmt(n, d);
+/** Like fmt(n, 2), but for values under 0.01 shows the first 2 non-zero decimal digits instead of rounding to 0.00. */
+export const fmtBal = (n: number): string => {
+  if (n === 0 || Math.abs(n) >= 0.01) return fmt(n, 2);
+  const d = Math.max(2, -Math.floor(Math.log10(Math.abs(n))) + 1);
+  return fmt(n, d);
+};
 
 export const Btn = ({
   kind = "sec",
@@ -110,7 +116,7 @@ export const Stat = ({
 
 const TOKEN_ICONS: Record<string, (p: { size?: number }) => ReactNode> = {
   ETH: IcTokenEth,
-  USDC: IcTokenUsdc,
+  USDG: IcTokenUsdg,
 };
 
 export const TokDot = ({ sym, color }: { sym: string; color?: string }) => {
@@ -135,6 +141,7 @@ export const AssetInput = ({
   onChange,
   token,
   balance,
+  balanceLabel,
   usdValue,
   readOnly,
   onMax,
@@ -145,6 +152,8 @@ export const AssetInput = ({
   onChange?: (v: string) => void;
   token: TokenLike;
   balance?: number | null;
+  /** Override the default "Balance {n}" text (e.g. to show a shielded/wallet split). */
+  balanceLabel?: ReactNode;
   usdValue?: number | null;
   readOnly?: boolean;
   onMax?: () => void;
@@ -153,9 +162,9 @@ export const AssetInput = ({
   <div className="ai">
     <div className="ai-top">
       <span className="lbl">{label}</span>
-      {balance != null && (
+      {(balanceLabel != null || balance != null) && (
         <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--tx3)" }}>
-          Balance {fmt(balance, 2)}
+          {balanceLabel ?? <>Balance {fmtBal(balance!)}</>}
           {onMax && (
             <button onClick={onMax} className="vio" style={{ marginLeft: 8, fontFamily: "var(--mono)", fontSize: 11, fontWeight: 500 }}>
               MAX

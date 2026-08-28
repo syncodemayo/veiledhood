@@ -338,7 +338,7 @@ export function createSwapsRouter(env: Env): Router {
       // Read sqrtPriceX96 from V4 PoolManager storage.
       // StateLibrary.sol: POOLS_SLOT = 6; pool state slot = keccak256(abi.encode(poolId, 6)).
       // Bottom 160 bits of that slot = sqrtPriceX96 (0 → pool not initialised).
-      const POOL_MANAGER = "0x498581ff718922c3f8e6a244956af099b2652b2b";
+      const POOL_MANAGER = "0x8366a39CC670B4001A1121B8F6A443A643e40951";
       const POOLS_SLOT   = 6n;
       const { poolKey } = pair;
 
