@@ -1,4 +1,5 @@
 import { ROBINHOOD_TESTNET_TOKEN_LIST } from "../config/tokenLists/robinhoodTestnet.js";
+import { ROBINHOOD_MAINNET_TOKEN_LIST } from "../config/tokenLists/robinhoodMainnet.js";
 
 export interface TokenListEntry {
   /** Lowercase 0x-prefixed contract address. */
@@ -18,9 +19,11 @@ export interface TokenListEntry {
 }
 
 const ROBINHOOD_TESTNET_CHAIN_ID = 46630;
+const ROBINHOOD_MAINNET_CHAIN_ID = 4663;
 
 const LIST_BY_CHAIN: Record<number, ReadonlyArray<TokenListEntry>> = {
   [ROBINHOOD_TESTNET_CHAIN_ID]: ROBINHOOD_TESTNET_TOKEN_LIST,
+  [ROBINHOOD_MAINNET_CHAIN_ID]: ROBINHOOD_MAINNET_TOKEN_LIST,
 };
 
 const SUPPORTED_CHAIN_IDS = Object.keys(LIST_BY_CHAIN).map(Number);

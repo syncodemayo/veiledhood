@@ -1,5 +1,5 @@
 /* VeiledHood — shell */
-.app{display:grid;grid-template-columns:var(--rail) 1fr;height:100%;overflow:hidden}
+.app{display:grid;grid-template-columns:var(--rail) 1fr;height:100vh;overflow:hidden}
 
 /* rail */
 .rail{background:var(--p1);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;position:relative;z-index:40}

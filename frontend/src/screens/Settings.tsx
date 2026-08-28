@@ -34,8 +34,8 @@ export function Settings() {
           </span>
           {address && <Addr a={address} onCopy={() => { navigator.clipboard.writeText(address); toast("Address copied"); }} />}
         </div>
-        <DRow k="Network" v="Robinhood Chain Testnet" />
-        <DRow k="Chain ID" v="46630" />
+        <DRow k="Network" v="Robinhood Chain" />
+        <DRow k="Chain ID" v="4663" />
         <div style={{ marginTop: 14 }}>
           <Btn
             kind="sec"

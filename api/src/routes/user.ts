@@ -10,6 +10,7 @@ import { Deposit } from "../models/Deposit.js";
 import { Transfer } from "../models/Transfer.js";
 import { UserBalance } from "../models/UserBalance.js";
 import { Withdraw } from "../models/Withdraw.js";
+import { Swap } from "../models/Swap.js";
 import { recordDeposit } from "../services/recordDeposit.js";
 import { signVeiledhoodWithdrawAuth } from "../services/signWithdrawAuth.js";
 import {
@@ -340,7 +341,7 @@ export function createUserRouter(env: Env): Router {
       );
       const address = req.walletAddress!;
 
-      const [deposits, withdraws, transfers] = await Promise.all([
+      const [deposits, withdraws, transfers, swaps] = await Promise.all([
         Deposit.find({ address, ...(chainId ? { chainId } : {}) })
           .sort({ createdAt: -1 })
           .limit(cap)
@@ -393,6 +394,26 @@ export function createUserRouter(env: Env): Router {
               createdAt: Date;
             }[]
           >(),
+        Swap.find({ fromAddress: address, ...(chainId ? { chainId } : {}) })
+          .sort({ createdAt: -1 })
+          .limit(cap)
+          .select(
+            "idempotencyKey tokenIn tokenOut amountIn amountOut chainId status swapTxHash adminWithdrawTxHash createdAt"
+          )
+          .lean<
+            {
+              idempotencyKey: string;
+              tokenIn: string;
+              tokenOut: string;
+              amountIn: string;
+              amountOut?: string;
+              chainId: number;
+              status: string;
+              swapTxHash?: string;
+              adminWithdrawTxHash?: string;
+              createdAt: Date;
+            }[]
+          >(),
       ]);
 
       type ActivityItem =
@@ -425,6 +446,19 @@ export function createUserRouter(env: Env): Router {
             merkleAfterTransferTxHash?: string | null;
             merkleAfterPayoutTxHash?: string | null;
             counterparty: string;
+          }
+        | {
+            kind: "swap";
+            tokenIn: string;
+            tokenOut: string;
+            amountIn: string;
+            amountOut?: string;
+            chainId: number;
+            createdAt: string;
+            idempotencyKey: string;
+            status: string;
+            swapTxHash?: string | null;
+            adminWithdrawTxHash?: string | null;
           };
 
       const items: ActivityItem[] = [];
@@ -466,15 +500,30 @@ export function createUserRouter(env: Env): Router {
           counterparty: out ? t.toAddress : t.fromAddress,
         });
       }
+      for (const s of swaps) {
+        items.push({
+          kind: "swap",
+          tokenIn: s.tokenIn,
+          tokenOut: s.tokenOut,
+          amountIn: s.amountIn,
+          amountOut: s.amountOut,
+          chainId: s.chainId,
+          createdAt: s.createdAt.toISOString(),
+          idempotencyKey: s.idempotencyKey,
+          status: s.status,
+          swapTxHash: s.swapTxHash ?? null,
+          adminWithdrawTxHash: s.adminWithdrawTxHash ?? null,
+        });
+      }
 
       items.sort((a, b) => {
         const tb = new Date(b.createdAt).getTime();
         const ta = new Date(a.createdAt).getTime();
         if (tb !== ta) return tb - ta;
         const ak =
-          a.kind === "transfer" ? a.idempotencyKey : a.txHash;
+          a.kind === "transfer" || a.kind === "swap" ? a.idempotencyKey : a.txHash;
         const bk =
-          b.kind === "transfer" ? b.idempotencyKey : b.txHash;
+          b.kind === "transfer" || b.kind === "swap" ? b.idempotencyKey : b.txHash;
         return bk.localeCompare(ak);
       });
 
@@ -484,7 +533,8 @@ export function createUserRouter(env: Env): Router {
         (items.length > offset + limit ||
           deposits.length === cap ||
           withdraws.length === cap ||
-          transfers.length === cap);
+          transfers.length === cap ||
+          swaps.length === cap);
 
       res.json({
         items: pageItems,

@@ -1,4 +1,4 @@
-export type VaultAssetId = "eth" | "usdc";
+export type VaultAssetId = "eth" | "usdg";
 
 export interface VaultAsset {
   id: VaultAssetId;
@@ -10,11 +10,13 @@ export interface VaultAsset {
   currencyKey: string;
 }
 
-const MOCK_USDC_ADDRESS = (import.meta.env.VITE_MOCK_USDC_ADDRESS ?? "0xA25A286d870167cCB2EAD984D177486e3f8F2DF0").toLowerCase();
+// Robinhood Chain mainnet's official stablecoin (Global Dollar) — verified against
+// docs.robinhood.com/chain/contracts and the Blockscout explorer directly.
+const USDG_ADDRESS = (import.meta.env.VITE_USDG_ADDRESS ?? "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168").toLowerCase();
 
 export const VAULT_ASSETS: VaultAsset[] = [
   { id: "eth", symbol: "ETH", decimals: 18, tokenAddress: null, currencyKey: "native" },
-  { id: "usdc", symbol: "USDC", decimals: 6, tokenAddress: MOCK_USDC_ADDRESS, currencyKey: MOCK_USDC_ADDRESS },
+  { id: "usdg", symbol: "USDG", decimals: 6, tokenAddress: USDG_ADDRESS, currencyKey: USDG_ADDRESS },
 ];
 
 export function getVaultAsset(id: VaultAssetId): VaultAsset {

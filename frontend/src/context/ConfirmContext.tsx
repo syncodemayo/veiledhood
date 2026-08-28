@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Modal, Step, Btn, DRow, Pill } from "../components/primitives/primitives";
 import { IcShield, IcCheck, IcExternal } from "../components/icons/Icons";
-import { ROBINHOOD_TESTNET_EXPLORER } from "../lib/wallet";
+import { ROBINHOOD_MAINNET_EXPLORER } from "../lib/wallet";
 import { errorMessage } from "../lib/errors";
 
 /** Called by `action` right before starting the step at this index — advances the
@@ -107,7 +107,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               {result?.summary && <div style={{ color: "var(--tx3)", fontSize: 13, marginBottom: 14 }}>{result.summary}</div>}
               {result?.txHash && (
                 <a
-                  href={`${ROBINHOOD_TESTNET_EXPLORER}/tx/${result.txHash}`}
+                  href={`${ROBINHOOD_MAINNET_EXPLORER}/tx/${result.txHash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="pill pill-mute"
