@@ -50,3 +50,4 @@ export const IcHistory = (p: IconProps) => <S {...p}><path d="M3.5 12a8.5 8.5 0 
 export const IcExternal = (p: IconProps) => <S {...p}><path d="M14 4h6v6M20 4l-8.5 8.5" /><path d="M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10" /></S>;
 export const IcWallet = (p: IconProps) => <S {...p}><rect x="3.5" y="6" width="17" height="13" rx="2.5" /><path d="M3.5 10.5h17" /><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none" /></S>;
 export const IcAlert = (p: IconProps) => <S {...p}><circle cx="12" cy="12" r="8.5" /><path d="M12 8v4.5" /><circle cx="12" cy="16" r=".9" fill="currentColor" stroke="none" /></S>;
+export const IcX = (p: IconProps) => <S {...p}><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></S>;

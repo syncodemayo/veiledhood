@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRevealObserver } from "./hooks";
 import { Count } from "./Count";
-import { Mark, IcSwap, IcVault, IcBridge, IcData, IcAgent, IcMcp, IcPay, IcStake, IcShield, IcLock, IcSpark, IcAlert, IcHistory } from "../components/icons/Icons";
+import { Mark, IcSwap, IcVault, IcBridge, IcData, IcAgent, IcMcp, IcPay, IcStake, IcShield, IcLock, IcSpark, IcAlert, IcHistory, IcX } from "../components/icons/Icons";
 import { Btn } from "../components/primitives/primitives";
 
 const APP_URL = import.meta.env.VITE_APP_URL ?? "http://localhost:5555";
@@ -71,6 +71,9 @@ export function LandingPage() {
             <a href="#faq">FAQ</a>
           </div>
           <div className="rt">
+            <a href="https://x.com/veiledhood" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', marginRight: '16px', color: 'inherit', transition: 'opacity 0.2s', opacity: 0.8 }} onMouseEnter={(e) => e.currentTarget.style.opacity = '1'} onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'} aria-label="Twitter">
+              <IcX size={20} />
+            </a>
             <Btn kind="ghost" size="sm">Docs</Btn>
             <a href={`${APP_URL}`}>
               <Btn kind="pri" size="sm">Launch app</Btn>
@@ -102,24 +105,6 @@ export function LandingPage() {
               <a href="#stack">
                 <Btn kind="sec" size="lg">See what's live</Btn>
               </a>
-            </div>
-            <div className="hstats rv d3">
-              <div>
-                <div className="hv"><Count value={24180} /></div>
-                <div className="hl">Notes in pool</div>
-              </div>
-              <div>
-                <div className="hv">$<Count value={4820} format="decimal2" />M</div>
-                <div className="hl">Shielded TVL</div>
-              </div>
-              <div>
-                <div className="hv"><Count value={20640} /></div>
-                <div className="hl">Agent calls</div>
-              </div>
-              <div>
-                <div className="hv"><Count value={0} /></div>
-                <div className="hl">Prompts leaked</div>
-              </div>
             </div>
           </div>
           <div className="art rv d2" aria-hidden>
