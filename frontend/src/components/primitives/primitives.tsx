@@ -1,5 +1,11 @@
 import { useEffect, useId, type ReactNode, type ButtonHTMLAttributes } from "react";
-import { IcCheck, IcClose, IcCopy, IcAlert, IcTokenEth, IcTokenUsdg } from "../icons/Icons";
+import { IcCheck, IcClose, IcCopy, IcAlert, IcTokenEth, Mark } from "../icons/Icons";
+import usdgLogo from "../../assets/tokens/usdg.png";
+import nvdaLogo from "../../assets/tokens/nvda.svg";
+import tslaLogo from "../../assets/tokens/tsla.svg";
+import spcxLogo from "../../assets/tokens/spcx.svg";
+import aaplLogo from "../../assets/tokens/aapl.svg";
+import ttwoLogo from "../../assets/tokens/ttwo.svg";
 
 export const cx = (...a: Array<string | false | undefined | null>) => a.filter(Boolean).join(" ");
 export const fmt = (n: number, d = 2) => n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -114,9 +120,59 @@ export const Stat = ({
   </div>
 );
 
+/** Circular badge wrapper for wordmark logos (imported as SVG asset URLs) that need a background. */
+const TokLogoImg = ({ src, size = 26 }: { src: string; size?: number }) => (
+  <span
+    style={{
+      width: size,
+      height: size,
+      borderRadius: "50%",
+      background: "#fff",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+      flexShrink: 0,
+    }}
+  >
+    <img src={src} alt="" style={{ width: "64%", height: "64%", objectFit: "contain" }} />
+  </span>
+);
+
+/** For logos that are already a filled circular badge (e.g. CoinGecko coin images) — no extra background needed. */
+const TokLogoCircle = ({ src, size = 26 }: { src: string; size?: number }) => (
+  <img src={src} alt="" style={{ width: size, height: size, borderRadius: "50%", flexShrink: 0, objectFit: "cover" }} />
+);
+
+/** VeiledHood's own mark (see FE-design/brand/BRAND.txt) — violet-lift on an ink ground, per brand guide. */
+const TokMarkVeil = ({ size = 26 }: { size?: number }) => (
+  <span
+    style={{
+      width: size,
+      height: size,
+      borderRadius: "50%",
+      background: "#08090B",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "#A88CFF",
+      flexShrink: 0,
+    }}
+  >
+    <Mark size={size * 0.72} compact={size <= 20} />
+  </span>
+);
+
 const TOKEN_ICONS: Record<string, (p: { size?: number }) => ReactNode> = {
   ETH: IcTokenEth,
-  USDG: IcTokenUsdg,
+  USDG: (p) => <TokLogoCircle src={usdgLogo} size={p.size} />,
+  VEILEDHOOD: (p) => <TokMarkVeil size={p.size} />,
+  NVDA: (p) => <TokLogoImg src={nvdaLogo} size={p.size} />,
+  TSLA: (p) => <TokLogoImg src={tslaLogo} size={p.size} />,
+  SPCX: (p) => <TokLogoImg src={spcxLogo} size={p.size} />,
+  AAPL: (p) => <TokLogoImg src={aaplLogo} size={p.size} />,
+  TTWO: (p) => <TokLogoImg src={ttwoLogo} size={p.size} />,
+  // PONS: no real-world logo found online — falls back to the default letter badge.
 };
 
 export const TokDot = ({ sym, color }: { sym: string; color?: string }) => {
